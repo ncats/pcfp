@@ -1,0 +1,77 @@
+<?xml version="1.0"?>
+
+<project name="pcfp" default="demo" basedir=".">
+    <property name="lib" value="lib"/>
+    <property name="build" value="build"/>
+    <property name="dist" value="dist"/>
+    <property name="deploy" value="deploy"/>
+    <property name="src" value="src"/>
+    <property file="build.properties"/>
+    <target name="init">
+        <tstamp>
+            <format property="touch.time"
+                    pattern="MM/dd/yyyy 'at' HH:mm:ss z"/>
+        </tstamp>
+
+        <!-- Create the build directory structure used by compile -->
+        <mkdir dir="${build}"/>
+        <mkdir dir="${dist}"/>
+        <mkdir dir="${deploy}"/>
+    </target>
+
+    <path id="compile.classpath">
+        <fileset dir="${lib}">
+            <include name="**/*.jar"/>
+        </fileset>
+    </path>
+
+    <path id="run.classpath">
+        <pathelement location="${build}"/>
+        <fileset dir="${lib}">
+            <include name="**/*.jar"/>
+        </fileset>
+    </path>
+
+    <target name="compile" depends="init">
+        <!-- Compile the java code from ${src} into ${build} -->
+        <javac srcdir="${src}"
+               destdir="${build}"
+               deprecation="on"
+               debug="${javac.debug}"
+               nowarn="${javac.generate.no.warnings}"
+               target="${javac.target}"
+               source="${javac.source}"
+               includeantruntime="false"
+               fork="no">
+            <classpath refid="compile.classpath"/>
+        </javac>
+    </target>
+
+    <target name="demo" description="Execute test cases" 
+         depends="compile">
+        <java classname="tripod.fingerprint.FPTest" 
+                  maxmemory="512m" classpathref="run.classpath" fork="true">
+          <arg value="./tests/CID_101040.sdf"/>
+          <arg value="./tests/CID_114328.sdf"/>
+          <arg value="./tests/CID_123029.sdf"/>
+          <arg value="./tests/CID_123031.sdf"/>
+          <arg value="./tests/CID_123218.sdf"/>
+          <arg value="./tests/CID_123591.sdf"/>
+          <arg value="./tests/CID_2553.sdf"/>
+          <arg value="./tests/CID_9362.sdf"/>
+        </java>
+    </target>
+
+    <target name="ring" description="Test ring perception" 
+         depends="compile">
+        <java classname="tripod.chem.RingPerception" 
+                  maxmemory="512m" classpathref="run.classpath" fork="true">
+          <arg value="./tests/CID_123031.sdf"/>
+        </java>
+    </target>
+
+    <target name="clean">
+        <delete dir="${build}"/>
+        <delete dir="${dist}"/>
+    </target>
+</project>

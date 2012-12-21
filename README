@@ -1,0 +1,6 @@
+12.21.2012
+
+An updated implementation of the PubChem substructural keys fingerprint.
+To build, you'll need to have Apache ant installed. Simply type ant 
+and off you go. Please report questions and/or problems to
+nguyenda@mail.nih.gov.
