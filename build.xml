@@ -7,11 +7,14 @@
     <property name="deploy" value="deploy"/>
     <property name="src" value="src"/>
     <property file="build.properties"/>
+
     <target name="init">
         <tstamp>
             <format property="touch.time"
                     pattern="MM/dd/yyyy 'at' HH:mm:ss z"/>
+            <format property="version" pattern="yyyyMMdd"/>
         </tstamp>
+        <property name="jar" value="pcfp-v${version}.jar"/>
 
         <!-- Create the build directory structure used by compile -->
         <mkdir dir="${build}"/>
@@ -60,6 +63,15 @@
           <arg value="./tests/CID_2553.sdf"/>
           <arg value="./tests/CID_9362.sdf"/>
         </java>
+    </target>
+
+    <target name="dist" depends="compile">
+        <jar jarfile="${dist}/${jar}" basedir="build">
+          <manifest>
+            <attribute name="Built-By" value="${user.name}"/>
+            <attribute name="Main-Class" value="tripod.fingerprint.FPTest"/>
+          </manifest>
+        </jar>
     </target>
 
     <target name="ring" description="Test ring perception" 

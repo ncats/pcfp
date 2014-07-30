@@ -123,7 +123,7 @@ public class FPTest {
         }
     }
 
-    void generate (PrintStream ps, Molecule mol) {
+    void generate (PrintStream ps, String id, Molecule mol) {
         pcfp.setMolecule(mol);
         ps.print(mol.getName());
         BitSet bits = pcfp.toBits();
@@ -145,6 +145,7 @@ public class FPTest {
 
         FPTest fptest = new FPTest ();
 
+        int id = 0;
 	for (int i = 0; i < argv.length; ++i) {
 	    MolImporter importer = null;
 	    try {
@@ -164,7 +165,7 @@ public class FPTest {
             if (importer != null) {
                 for (Molecule mol = new Molecule (); importer.read(mol);) {
                     //fptest.evaluate(System.out, mol);
-                    fptest.generate(System.out, mol);
+                    fptest.generate(System.out, String.valueOf(++id), mol);
                 }
                 importer.close();
             }
