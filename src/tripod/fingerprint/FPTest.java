@@ -1,8 +1,8 @@
 package tripod.fingerprint;
 
 /***********************************************************************
-			 PUBLIC DOMAIN NOTICE
-		     NIH Chemical Genomics Center
+                         PUBLIC DOMAIN NOTICE
+                     NIH Chemical Genomics Center
          National Center for Advancing Translational Sciences
 
 This software/database is a "United States Government Work" under the
@@ -125,7 +125,7 @@ public class FPTest {
 
     void generate (PrintStream ps, String id, Molecule mol) {
         pcfp.setMolecule(mol);
-        ps.print(mol.getName());
+        ps.print(id);
         BitSet bits = pcfp.toBits();
         for (int i = bits.nextSetBit(0); i >= 0; i = bits.nextSetBit(i+1)) {
             ps.print(" "+i);
@@ -138,21 +138,19 @@ public class FPTest {
     }
 
     public static void main (String argv[]) throws Exception {
-	if (argv.length == 0) {
-	    System.out.println("FPTest FILES...");
-	    System.exit(1);
-	}
+        if (argv.length == 0) {
+            System.out.println("FPTest FILES...");
+            System.exit(1);
+        }
 
         FPTest fptest = new FPTest ();
-
-        int id = 0;
-	for (int i = 0; i < argv.length; ++i) {
-	    MolImporter importer = null;
-	    try {
-		importer = new MolImporter 
-		    (new GZIPInputStream (new FileInputStream (argv[i])));
-	    }
-	    catch (Exception ex) {
+        for (int i = 0; i < argv.length; ++i) {
+            MolImporter importer = null;
+            try {
+                importer = new MolImporter 
+                    (new GZIPInputStream (new FileInputStream (argv[i])));
+            }
+            catch (Exception ex) {
                 try {
                     importer = new MolImporter (argv[i]);
                 }
@@ -160,16 +158,19 @@ public class FPTest {
                     fptest.evaluate
                         (System.out, new MolHandler (argv[i]).getMolecule());
                 }
-	    }
+            }
 
             if (importer != null) {
+                String idProp = System.getProperty("fp.id", null);
                 for (Molecule mol = new Molecule (); importer.read(mol);) {
                     //fptest.evaluate(System.out, mol);
-                    fptest.generate(System.out, String.valueOf(++id), mol);
+                    String id = idProp != null ? mol.getProperty(idProp)
+                        : mol.getName();
+                    fptest.generate(System.out, id, mol);
                 }
                 importer.close();
             }
-	}
+        }
         fptest.summary();
         fptest.shutdown();
     }
